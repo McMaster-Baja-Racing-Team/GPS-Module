@@ -3,13 +3,20 @@
 #include <SPI.h>
 #include <SD.h>
 
+/*Pinouts
+ * GPS Vin-3V3, GND, RX-2, TX-3
+ * SD GND, Vcc-5V, MISO-12, MOSI-11, SCK-13, CS-10
+ * RGB R-9, GND+5V, G-6, B-5 **Remember Resistors 
+ * Button (Opposite Corners)-> (7/GND) and (RST/GND)
+*/
+
 SoftwareSerial txrx(3, 2); //(TX,RX) pins on GPS module
 Adafruit_GPS GPS(&txrx);
 File gpsFile;
 int R = 9;
 int G = 6;
 int B = 5;
-int button = 8;
+int button = 7;
 int bt = 3; //Button Tracker, 1 = Trying to Write, 2 = Rdy to Power off, 3 = SD Not Set Up/Failed
 uint32_t timer = millis();
 int counter = 0;
@@ -81,7 +88,7 @@ void loop()
         counter++;
         Serial.println (counter);
         gpsFile = SD.open("gpsData.txt", FILE_WRITE);
-        //Time(H:M:S)| Lat&Long (Deg) | Speed | Altitude | Satellites
+        //Log # | Time(H:M:S)| Lat&Long (Deg) | Speed (Km/h) | Altitude | # Satellites
         gpsFile.print(counter); gpsFile.print('|');
         gpsFile.print(GPS.hour, DEC); gpsFile.print(':');
         gpsFile.print(GPS.minute, DEC); gpsFile.print(':');
@@ -101,9 +108,4 @@ void loop()
     setColor(0,0,255); //Set LED Blue: Button Pressed = Paused/Rdy to Shutdown 
 }
 
-/*Pinouts
- * GPS Vin-3V2, GND, RX-2, TX-3
- * SD GND, Vcc-5V, MISO-12, MOSI-11, SCK-13, CS-10
- * RGB R-9, GND+5V, G-6, B-5 **Remember Resistors 
- * Button (Opposite Corners)-> (8/GND)
-*/
+
